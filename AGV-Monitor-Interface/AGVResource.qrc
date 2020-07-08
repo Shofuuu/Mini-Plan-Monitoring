@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/Logo">
+        <file>citra/rsz_logo_universitas_gadjah_mada.png</file>
+        <file>citra/monitor.png</file>
+        <file>citra/configure.png</file>
+        <file>citra/browse.png</file>
+        <file>citra/agv.png</file>
+        <file>citra/connect.png</file>
+    </qresource>
+</RCC>
