@@ -145,7 +145,10 @@ AGVMonitorInterface::AGVMonitorInterface(QWidget *parent) : QMainWindow(parent),
                 "}");
 
     this->showMaximized();
+    netdevice = new QNetworkAccessManager(this);
+
     AGVMonitorInterface::makeplot();
+    connect(netdevice, &QNetworkAccessManager::finished, this, &AGVMonitorInterface::parsejsondevice);
 }
 
 AGVMonitorInterface::~AGVMonitorInterface(){
@@ -176,14 +179,12 @@ void AGVMonitorInterface::parsejsondevice(QNetworkReply *netreply){
     }
 
     netreply->deleteLater();
-    netdevice->deleteLater();
+    //netdevice->deleteLater();
     netreply->close();
 }
 
 void AGVMonitorInterface::timerinterrupt(){
-    netdevice = new QNetworkAccessManager(this);
     //QNetworkAccessManager netdevice;
-    connect(netdevice, &QNetworkAccessManager::finished, this, &AGVMonitorInterface::parsejsondevice);
 
     QString reqtext = "request";
     QUrlQuery query;
@@ -197,10 +198,10 @@ void AGVMonitorInterface::timerinterrupt(){
     ui->monitor_render->update();
     ui->monitor_render->update();
 
-    query.clear();
-    deviceurl.clear();
-    netdevice->clearConnectionCache();
-    netdevice->clearAccessCache();
+    //query.clear();
+    //deviceurl.clear();
+    //netdevice->clearConnectionCache();
+    //netdevice->clearAccessCache();
     //netdevice->deleteLater();
 }
 

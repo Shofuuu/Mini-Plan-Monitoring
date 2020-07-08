@@ -36,34 +36,34 @@ void monitorrender::mouseReleaseEvent(QMouseEvent *event){
 }
 
 void monitorrender::paintEvent(QPaintEvent *event){
-    if(msevent){
-        if(widget_status.getClearStatusMap()){
-            drawing_line.clear();
-            widget_status.setClearStatusMap(false);
-        }
+    QPainter painter_map(this);
+    QPen pen_map;
 
-        QPainter painter(this);
-        QPen pen;
+    if(msevent){
+        /*QPainter painter_map(this);
+        QPen pen_map;*/
+
         QPainter dof(this);
         QPen pen_dof;
 
-        pen.setWidth(3);
+        pen_map.setWidth(3);
+        pen_map.setColor(QColor(41, 128, 185));
         pen_dof.setColor(QColor(41, 128, 185));
         pen_dof.setWidth(3);
-        pen.setColor(QColor(41, 128, 185));
 
-        painter.setRenderHints(QPainter::HighQualityAntialiasing);
+        painter_map.setRenderHints(QPainter::HighQualityAntialiasing);
+        painter_map.setPen(pen_map);
         dof.setRenderHints(QPainter::HighQualityAntialiasing);
-        painter.setPen(pen);
         dof.setPen(pen_dof);
 
-        dof.drawEllipse(point.x()-2.5, point.y()-2.5, 5, 5);
-        if(drawing_line.length() > 0)
-            painter.drawLines(drawing_line);
+        dof.drawEllipse(point.x()-3, point.y()-3, 6, 6);
+        if(!widget_status.getNetworkStatusOK()){
+            if(drawing_line.length() > 0)
+                painter_map.drawLines(drawing_line);
+        }
     }
 
     if(widget_status.getRenderMapStatus()){
-        drawing_line.clear();
         draw_map_x = widget_status.getFreeHandDrawAsMapX();
         draw_map_y = widget_status.getFreeHandDrawAsMapY();
 
@@ -107,13 +107,7 @@ void monitorrender::paintEvent(QPaintEvent *event){
                  << widget_status.getDevicePositionY();*/
 
         if(widget_status.getDeviceTrackHistory()){
-            if(widget_status.getClearStatusMap()){
-                drawing_history.clear();
-                widget_status.setClearStatusMap(false);
-            }
-
             pen.setWidth(3);
-            pen.setStyle(Qt::DotLine);
             pen.setColor(QColor(41, 128, 185));
 
             painter.setPen(pen);
@@ -121,7 +115,30 @@ void monitorrender::paintEvent(QPaintEvent *event){
             if(drawing_history.length() > 0)
                 painter.drawLines(drawing_history);
         }
+
+
+        //if(!widget_status.getNetworkStatusOK()){
+            pen_map.setWidth(3);
+            pen_map.setColor(QColor(41, 128, 185));
+
+            painter_map.setRenderHints(QPainter::HighQualityAntialiasing);
+            painter_map.setPen(pen_map);
+
+            if(drawing_line.length() > 0)
+                painter_map.drawLines(drawing_line);
+
+        //}
     }
+
+    if(widget_status.getClearStatusMap()){
+        drawing_line.clear();
+        drawing_history.clear();
+        widget_status.setClearStatusMap(false);
+        update();
+    }
+
+    /*if(drawing_line.length() > 0)
+        painter_map.drawLines(drawing_line);*/
 }
 
 void monitorrender::resetRenderView(){
@@ -129,6 +146,8 @@ void monitorrender::resetRenderView(){
     draw_map_x.clear();
     draw_map_y.clear();
     widget_status.clearFreeHandDraw();
+    widget_status.setClearStatusMap(true);
+    widget_status.setRenderMapStatus(false);
 
     update();
 }
