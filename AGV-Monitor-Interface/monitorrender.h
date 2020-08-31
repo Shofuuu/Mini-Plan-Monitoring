@@ -18,12 +18,14 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
     void resetRenderView();
+    void findPathJacobian(QLineF data, QVector<double> coordMapX, QVector<double> coordMapY);
 
 private:
     QPoint point, old_point;
     QVector<QLineF> drawing_line;
     QVector<QLineF> drawing_history;
     QVector<double> draw_map_x, draw_map_y;
+    QVector<double> coord_pos_X, coord_pos_Y;
     bool msevent = false;
     int old_pos_history_x, old_pos_history_y;
 };

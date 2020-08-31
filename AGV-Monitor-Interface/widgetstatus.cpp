@@ -17,12 +17,28 @@ QVector<double> WidgetStatus::getFreeHandDrawAsMapY(){
     return freeMapDataY;
 }
 
+QVector<double> WidgetStatus::getFreeHandDrawPixelX(){
+    return freeMapPixelX;
+}
+
+QVector<double> WidgetStatus::getFreeHandDrawPixelY(){
+    return freeMapPixelY;
+}
+
 void WidgetStatus::setFreeHandDrawAsMapX(double map){
         freeMapDataX.append(map);
 }
 
 void WidgetStatus::setFreeHandDrawAsMapY(double map){
     freeMapDataY.append(map);
+}
+
+void WidgetStatus::setFreeHandDrawPixelX(double map){
+    freeMapPixelX.append(map);
+}
+
+void WidgetStatus::setFreeHandDrawPixelY(double map){
+    freeMapPixelY.append(map);
 }
 
 void WidgetStatus::clearFreeHandDraw(){

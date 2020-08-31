@@ -10,9 +10,13 @@ public:
     bool getFreeHandDrawStatus(void);
     QVector<double> getFreeHandDrawAsMapX(); // 0 for x; 1 for y
     QVector<double> getFreeHandDrawAsMapY(); // 0 for x; 1 for y
+    QVector<double> getFreeHandDrawPixelX();
+    QVector<double> getFreeHandDrawPixelY();
     int getFreeHandDrawASize(void);
     void setFreeHandDrawAsMapX(double map);
     void setFreeHandDrawAsMapY(double map);
+    void setFreeHandDrawPixelX(double map);
+    void setFreeHandDrawPixelY(double map);
     void clearFreeHandDraw();
     void setRenderMapStatus(bool status);
     bool getRenderMapStatus(void);
@@ -40,6 +44,8 @@ private:
     double deviceangle;
     QVector<double> freeMapDataX;
     QVector<double> freeMapDataY;
+    QVector<double> freeMapPixelX;
+    QVector<double> freeMapPixelY;
 };
 
 inline WidgetStatus widget_status;

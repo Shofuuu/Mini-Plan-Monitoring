@@ -1,5 +1,6 @@
 #include "monitorrender.h"
 #include "widgetstatus.h"
+#include <QtMath>
 
 monitorrender::monitorrender(QWidget *parent) : QWidget(parent){
 }
@@ -17,11 +18,20 @@ void monitorrender::mousePressEvent(QMouseEvent *event){
             old_point.setY(point.y());
         }
 
+        coord_pos_X.append(point.x());
+        coord_pos_Y.append(point.y());
+
         QLineF new_line(old_point.x(), old_point.y(), point.x(), point.y());
+        findPathJacobian(new_line, coord_pos_X, coord_pos_Y); // calculate robot track
         drawing_line.append(new_line);
 
         old_point.setX(point.x());
         old_point.setY(point.y());
+
+        if(coord_pos_X.length() > 2)
+            coord_pos_X.remove(0);
+        if(coord_pos_Y.length() > 2)
+            coord_pos_Y.remove(0);
 
         msevent = true;
         update();
@@ -31,8 +41,9 @@ void monitorrender::mousePressEvent(QMouseEvent *event){
 void monitorrender::mouseReleaseEvent(QMouseEvent *event){
     msevent = false;
 
-    if(widget_status.getFreeHandDrawStatus())
+    if(widget_status.getFreeHandDrawStatus()){
         update();
+    }
 }
 
 void monitorrender::paintEvent(QPaintEvent *event){
@@ -131,6 +142,11 @@ void monitorrender::paintEvent(QPaintEvent *event){
     }
 
     if(widget_status.getClearStatusMap()){
+        point.setX(0);
+        point.setY(0);
+        old_point.setX(0);
+        old_point.setY(0);
+
         drawing_line.clear();
         drawing_history.clear();
         widget_status.setClearStatusMap(false);
@@ -150,4 +166,90 @@ void monitorrender::resetRenderView(){
     widget_status.setRenderMapStatus(false);
 
     update();
+}
+
+void monitorrender::findPathJacobian(QLineF data, QVector<double> coordMapX, QVector<double> coordMapY){
+    QVector<double> coord_X, coord_Y;
+    QPointF* point = new QPointF();
+    QPixmap* pixelmap = new QPixmap;
+    QImage* pixelimg = new QImage;
+    QColor* pixelcolor = new QColor;
+    *pixelmap = QPixmap::grabWidget(this);
+    QPen pen;
+    QRgb pixelrgb;
+
+    int x1, y1;
+    int x2, y2;
+
+    widget_status.setRenderMapStatus(true);
+    pen.setColor(Qt::transparent);
+
+    if(coordMapX.length() > 1){
+        coord_X = coordMapX;
+        coord_Y = coordMapY;
+
+        x1 = coord_X[0];
+        x2 = coord_X[1];
+        y1 = coord_Y[0];
+        y2 = coord_Y[1];
+
+        /*qDebug() << "\n***** NEW DATA LOADED *****\n"
+                 << "X1 : " << x1 << " | Y1 : " << y1
+                 << "\nX2 : " << x2 << " | Y2 : " << y2
+                 << "\nFlag : (x1 > x2)" << (x1 > x2)
+                 << "\nFlag : (y1 > y2)" << (y1 > y2) << "\n";*/
+
+        if((x1 > x2) & (y1 < y2)){
+            //qDebug() << "Condition 1/2/8";
+            for(int y=y1; y<=y2; y++){
+                for(int x=x2; x<=x1; x++){
+                    *pixelimg = pixelmap->toImage();
+                    pixelrgb = pixelimg->pixel(x, y);
+                    pixelcolor->setRgb(pixelrgb);
+
+                    if(pixelcolor->name() == "#2c3e50")
+                        qDebug() << x << ";" << y << ";";
+                }
+            }
+        }
+        if((x1 > x2) & (y1 > y2)){
+            //qDebug() << "Condition 3/5";
+            for(int y=y2; y<=y1; y++){
+                for(int x=x2; x<=x1; x++){
+                    *pixelimg = pixelmap->toImage();
+                    pixelrgb = pixelimg->pixel(x, y);
+                    pixelcolor->setRgb(pixelrgb);
+
+                    if(pixelcolor->name() == "#2c3e50")
+                        qDebug() << x << ";" << y << ";";
+                }
+            }
+        }
+        if((x1 < x2) & (y1 > y2)){
+            //qDebug() << "Condition 4/6";
+            for(int y=y2; y<=y1; y++){
+                for(int x=x1; x<=x2; x++){
+                    *pixelimg = pixelmap->toImage();
+                    pixelrgb = pixelimg->pixel(x, y);
+                    pixelcolor->setRgb(pixelrgb);
+
+                    if(pixelcolor->name() == "#2c3e50")
+                        qDebug() << x << ";" << y << ";";
+                }
+            }
+        }
+        if((x1 < x2) & (y1 < y2)){
+            //qDebug() << "Condition 7";
+            for(int y=y1; y<=y2; y++){
+                for(int x=x1; x<=x2; x++){
+                    *pixelimg = pixelmap->toImage();
+                    pixelrgb = pixelimg->pixel(x, y);
+                    pixelcolor->setRgb(pixelrgb);
+
+                    if(pixelcolor->name() == "#2c3e50")
+                        qDebug() << x << ";" << y << ";";
+                }
+            }
+        }
+    }
 }

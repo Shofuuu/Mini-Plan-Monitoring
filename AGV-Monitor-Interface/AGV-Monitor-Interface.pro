@@ -1,6 +1,7 @@
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport network
+QT_LOGGING_RULES="*.debug=false"
 
 CONFIG += c++11
 
