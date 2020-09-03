@@ -128,7 +128,7 @@ int main(void){
     }
 
     /* Comment for debug and calibrate */
-    if(adc_data_raw[0] < (sensor_cal_left-2))
+    if(adc_data_raw[0] < (sensor_cal_left-1))
       uart_transmits((char*)"L\n");
     else if(adc_data_raw[1] < (sensor_cal_right-1))
       uart_transmits((char*)"R\n");
