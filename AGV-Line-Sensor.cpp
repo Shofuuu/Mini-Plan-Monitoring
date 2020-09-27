@@ -1,3 +1,4 @@
+// AtMega328P 16MHz
 #ifndef F_CPU
   #define F_CPU 16000000UL
 #endif
