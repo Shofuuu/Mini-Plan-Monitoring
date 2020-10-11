@@ -1,8 +1,3 @@
-// AtMega328P 16MHz
-#ifndef F_CPU
-  #define F_CPU 16000000UL
-#endif
-
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdlib.h>
@@ -64,8 +59,8 @@ static uint16_t adc_read(uint8_t p){
 }
 
 static uint8_t sensor_read(uint8_t s){
-  uint8_t adc_array[10][8];
-  uint8_t adc_array_sum[8];
+  uint8_t adc_array[10][6];
+  uint8_t adc_array_sum[6];
   uint8_t adc_avg = 0;
 
   if(s){ // ENABLE_SENSOR_RIGHT
@@ -77,11 +72,11 @@ static uint8_t sensor_read(uint8_t s){
   }
 
   for(uint8_t y=0;y<10;y++){
-    for(uint8_t x=0;x<7;x++){
-      adc_array[y][x] = adc_read(0);
+    for(uint8_t x=0;x<6;x++){
+      adc_array[y][x] = adc_read(x);
     }
   }
-  for(uint8_t x=0;x<7;x++){
+  for(uint8_t x=0;x<6;x++){
     for(uint8_t y=0;y<10;y++){
       adc_avg += adc_array[y][x];
     }
@@ -89,7 +84,7 @@ static uint8_t sensor_read(uint8_t s){
     adc_avg = 0;
   }
 
-  for(uint8_t x=0;x<7;x++)
+  for(uint8_t x=0;x<6;x++)
     adc_avg += adc_array_sum[x];
   return adc_avg;
 }
@@ -134,11 +129,11 @@ int main(void){
 
     /* Comment for debug and calibrate */
     if(adc_data_raw[0] < (sensor_cal_left-1))
-      uart_transmits((char*)"L\n");
+      uart_transmits((char*)"L100\r\n");
     else if(adc_data_raw[1] < (sensor_cal_right-1))
-      uart_transmits((char*)"R\n");
+      uart_transmits((char*)"R100\r\n");
     else
-      uart_transmits((char*)"F\n");
+      uart_transmits((char*)"F150\r\n");
     /* Comment for debug and calibrate */
 
     /* Uncomment for debug and calibrate */
